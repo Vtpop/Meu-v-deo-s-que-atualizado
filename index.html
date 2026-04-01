@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Segurana do Sistema</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    overflow: hidden;
+    background: black;
+    color: white;
+}
+
+/* TELA INICIAL */
+#tela {
+    text-align: center;
+    padding-top: 40px;
+}
+
+#barra {
+    width: 80%;
+    height: 20px;
+    border: 2px solid white;
+    margin: 20px auto;
+}
+
+#progresso {
+    height: 100%;
+    width: 0%;
+    background: red;
+}
+
+/* POPUPS */
+.popup {
+    position: fixed;
+    width: 240px;
+    height: 140px;
+    background: #c0c0c0;
+    border: 2px solid black;
+}
+
+.topbar {
+    background: #0000aa;
+    color: white;
+    padding: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.close {
+    cursor: pointer;
+}
+
+.content {
+    text-align: center;
+    padding: 10px;
+    color: black;
+}
+
+.face {
+    font-size: 28px;
+}
+
+/* TELA AZUL */
+#blue {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #0078d7;
+    color: white;
+    display: none;
+    padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="tela">
+    <h2> Seu dispositivo foi comprometido</h2>
+    <p>Verificando vrus...</p>
+
+    <div id="barra">
+        <div id="progresso"></div>
+    </div>
+
+    <p id="status">Iniciando...</p>
+</div>
+
+<div id="blue">
+    <h1>:P</h1>
+    <p>
+    Seu dispositivo foi hackeado por Davi <br><br>
+    agora tem que esperar o site terminar de carregar XD<br>
+    e se tu sair eu irei te perseguir porque sou do mal MUAHAHAHA<br><br>
+    beijos de mim 
+    </p>
+
+    <div id="percent">0%</div>
+</div>
+
+<script>
+let progresso = 0;
+let contador = 0;
+let modoBlue = false;
+
+/* BARRA INICIAL */
+function iniciarScan() {
+    progresso += Math.random() * 10;
+
+    if (progresso > 100) progresso = 100;
+
+    document.getElementById("progresso").style.width = progresso + "%";
+
+    if (progresso < 30) {
+        status.innerText = "Verificando arquivos...";
+    } else if (progresso < 60) {
+        status.innerText = "Analisando sistema...";
+    } else if (progresso < 90) {
+        status.innerText = "Detectando ameaas...";
+    } else {
+        status.innerText = "ERRO CRTICO!";
+        setTimeout(iniciarCaos, 800);
+        return;
+    }
+
+    setTimeout(iniciarScan, 500);
+}
+
+/* COMEA CAOS */
+function iniciarCaos() {
+    document.getElementById("tela").style.display = "none";
+
+    for (let i = 0; i < 5; i++) criarJanela();
+}
+
+/* POPUPS */
+function criarJanela() {
+    if (modoBlue) return;
+
+    contador++;
+
+    if (contador > 50) {
+        iniciarTelaAzul();
+        return;
+    }
+
+    let largura = 240;
+    let altura = 140;
+
+    let div = document.createElement("div");
+    div.className = "popup";
+
+    let x = Math.random() * (window.innerWidth - largura);
+    let y = Math.random() * (window.innerHeight - altura);
+
+    div.style.left = x + "px";
+    div.style.top = y + "px";
+
+    div.innerHTML = `
+        <div class="topbar">
+            ERRO
+            <span class="close" onclick="multiplicar(event)">X</span>
+        </div>
+        <div class="content">
+            <div>Hahaha, I got you! April Fool's </div>
+            <div class="face"></div>
+        </div>
+    `;
+
+    document.body.appendChild(div);
+    mover(div, largura, altura);
+}
+
+/* MOVIMENTO */
+function mover(el, largura, altura) {
+    let dx = 2;
+    let dy = 2;
+
+    setInterval(() => {
+        let x = el.offsetLeft + dx;
+        let y = el.offsetTop + dy;
+
+        if (x <= 0 || x >= window.innerWidth - largura) dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - altura) dy *= -1;
+
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+    }, 16);
+}
+
+/* MULTIPLICA */
+function multiplicar(e) {
+    e.stopPropagation();
+    for (let i = 0; i < 3; i++) criarJanela();
+}
+
+/* CLICK GERAL */
+document.body.addEventListener("click", () => {
+    for (let i = 0; i < 2; i++) criarJanela();
+});
+
+/* TELA AZUL */
+function iniciarTelaAzul() {
+    modoBlue = true;
+
+    document.getElementById("blue").style.display = "block";
+    document.body.innerHTML = document.getElementById("blue").outerHTML;
+
+    tocarSom();
+    iniciarPercentual();
+}
+
+/* SOM PAM */
+function tocarSom() {
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let osc = ctx.createOscillator();
+
+    osc.type = "square";
+    osc.frequency.setValueAtTime(180, ctx.currentTime);
+
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+}
+
+/* PORCENTAGEM + FINAL */
+function iniciarPercentual() {
+    let p = 0;
+
+    let intervalo = setInterval(() => {
+        p++;
+        document.getElementById("percent").innerText = p + "%";
+
+        if (p >= 100) {
+            clearInterval(intervalo);
+
+            document.body.innerHTML = `
+                <div style="
+                    background:black;
+                    color:white;
+                    width:100%;
+                    height:100vh;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    font-size:24px;
+                    text-align:center;
+                ">
+                    por que voc ainda est aqui? 
+                </div>
+            `;
+
+            somBizarro();
+        }
+    }, 80);
+}
+
+/* SOM BIZARRO FINAL  */
+function somBizarro() {
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function loop() {
+        let osc = ctx.createOscillator();
+        let gain = ctx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(100 + Math.random()*400, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+
+        setTimeout(loop, Math.random() * 600);
+    }
+
+    loop();
+}
+
+/* START */
+iniciarScan();
+</script>
+
+</body>
+</html>
